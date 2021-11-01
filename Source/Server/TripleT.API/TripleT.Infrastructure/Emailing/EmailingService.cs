@@ -26,7 +26,7 @@ namespace TripleT.Infrastructure.Emailing
 
         public async Task<string> SendEmailAsync<TTemplateData>(EmailRequest<TTemplateData> request, CancellationToken cancellationToken)
         {
-            var client = new AmazonSimpleNotificationServiceClient("AKIA6LFWDBRBBHQQKQ4G", "Vn0pPzyKbg+v8xNsPybFmfliXTIVgf4TlrpabIyU", Amazon.RegionEndpoint.AFSouth1);
+            var client = new AmazonSimpleNotificationServiceClient("", "", Amazon.RegionEndpoint.AFSouth1);
 
             _logger.LogInformation($"Sending message to emailing SNS topic: [{request.FormatAsJsonForLogging()}]");
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,32 +29,63 @@ namespace TripleT.Infrastructure.Persistence
                 await context.SaveChangesAsync(CancellationToken.None);
             }
 
+            LanguageEntity languageEntity = new LanguageEntity { Value = "Afrikaans" };
+            GradeEntity gradeEntity = new GradeEntity { Value = "9" };
+            ModuleTypeEntity moduleTypeEntity = new ModuleTypeEntity { TypeName = "Theory Summary" };
+            SubjectEntity subjectEntity = new SubjectEntity { Name = "Maths" };
 
-            var summaryEntity1 = new SummaryEntity() { Name = "Trig", Description = "Triangles", FileLocation = "test\\test", Price = 90.5m, };
-            var summaryEntity2 = new SummaryEntity() { Name = "Problems", Description = "Triangles", FileLocation = "test\\test", Price = 90.5m };
+            await context.Languages.AddAsync(languageEntity);
+            await context.Grades.AddAsync(gradeEntity);
+            await context.ModuleTypes.AddAsync(moduleTypeEntity);
+            await context.Subjects.AddAsync(subjectEntity);
 
-            var categoryEntity = new SummaryCategoryEntity { Name = "Maths" };
+            ModuleEntity moduleEntity1 = new ModuleEntity
+            {
+                Name = "Module one",
+                Description = "First One",
+                FileLocation = "SomeLocation",
+                Price = 200,
+                Subject = subjectEntity,
+                ModuleType = moduleTypeEntity,
+                Language = languageEntity,
+                Grade = gradeEntity
+            };
 
-            categoryEntity.Summaries.Add(summaryEntity1);
-            categoryEntity.Summaries.Add(summaryEntity2);
+            ModuleEntity moduleEntity2 = new ModuleEntity
+            {
+                Name = "Module Two",
+                Description = "First Two",
+                FileLocation = "SomeLocation Two",
+                Price = 20,
+                Subject = subjectEntity,
+                ModuleType = moduleTypeEntity,
+                Language = languageEntity,
+                Grade = gradeEntity
+            };
 
-            var summaryPackageEntity = new SummaryPackageEntity { Name = "All Maths", Description = "All of it", Price = 200m };
-            categoryEntity.SummaryPackages.Add(summaryPackageEntity);
+            await context.Modules.AddAsync(moduleEntity1);
+            await context.Modules.AddAsync(moduleEntity2);
 
-            var packageSummaryLink1 = new PackageSummaryLinkEntity() { SummaryPackage = summaryPackageEntity, Summary = summaryEntity1 };
-            var packageSummaryLink2 = new PackageSummaryLinkEntity() { SummaryPackage = summaryPackageEntity, Summary = summaryEntity2 };
+            PackageEntity packageEntity = new PackageEntity
+            {
+                Name = "Maths one and two",
+                Description = "All maths",
+                Price = 40,
+                Subject = subjectEntity,
+                Grade = gradeEntity,
+                Modules = new List<ModuleEntity> { moduleEntity1, moduleEntity2 }
+            };
 
-            await context.SummaryCategories.AddAsync(categoryEntity);
-
-            await context.PackageSummariesLink.AddRangeAsync(packageSummaryLink1);
-            await context.PackageSummariesLink.AddRangeAsync(packageSummaryLink2);
+            await context.Packages.AddAsync(packageEntity);
 
             await context.SaveChangesAsync(CancellationToken.None);
 
-            //categoryEntity.SummaryPackages.Add()
-
-            //context.SummaryCategories
+            foreach (var entry in context.ChangeTracker.Entries())
+            {
+                entry.State = EntityState.Detached;
+            }
         }
+
 
         private static UserEntity GetUser(string name, string surname, string email, RoleEntity role)
         {

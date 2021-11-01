@@ -13,10 +13,12 @@ namespace TripleT.Application.Common.Interfaces.Infrastructure
         DbSet<UserEntity> Users { get; set; }
         DbSet<RoleEntity> Roles { get; set; }
         DbSet<UserAuditEntity> UserAudits { get; set; }
-        DbSet<PackageSummaryLinkEntity> PackageSummariesLink { get; set; }
-        DbSet<SummaryEntity> Summaries { get; set; }
-        DbSet<SummaryCategoryEntity> SummaryCategories { get; set; }
-        DbSet<SummaryPackageEntity> SummaryPackages { get; set; }
+        DbSet<GradeEntity> Grades { get; set; }
+        DbSet<ModuleTypeEntity> ModuleTypes { get; set; }
+        DbSet<ModuleEntity> Modules { get; set; }
+        DbSet<SubjectEntity> Subjects { get; set; }
+        DbSet<PackageEntity> Packages { get; set; }
+        DbSet<LanguageEntity> Languages { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

@@ -59,6 +59,8 @@ namespace TripleT.API.Filter
                 Message = context.Exception.Message
             };
 
+            _logger.LogError($"Duplicate entity. Message: [{context.Exception.Message}]");
+
             context.Result = new ObjectResult(errorResponse)
             {
                 StatusCode = StatusCodes.Status409Conflict
@@ -72,6 +74,8 @@ namespace TripleT.API.Filter
                 ErrorCode = ApplicationErrorCodes.ENTITY_NOT_FOUND.GetEnumCode(),
                 Message = context.Exception.Message
             };
+
+            _logger.LogError($"Entity not found. Message: [{context.Exception.Message}]");
 
             context.Result = new ObjectResult(errorResponse)
             {

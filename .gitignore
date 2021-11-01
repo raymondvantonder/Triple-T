@@ -230,4 +230,5 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 /NDependOut
-/CleanArchitecture.ndproj
+
+#/Source/Server/TripleT.API/TripleT.API/secrets.json

@@ -18,36 +18,40 @@ namespace TripleT.API
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            //using (var scope = host.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
 
-                try
-                {
-                    var context = services.GetRequiredService<TripleTDbContext>();
+            //    try
+            //    {
+            //        var context = services.GetRequiredService<TripleTDbContext>();
 
-                    if (context.Database.IsSqlServer())
-                    {
-                        context.Database.Migrate();
-                    }
+            //        if (context.Database.IsSqlServer())
+            //        {
+            //            context.Database.Migrate();
+            //        }
 
-                    await TripleTDbContextSeed.SeedSampleDataAsync(context);
-                }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            //        await TripleTDbContextSeed.SeedSampleDataAsync(context);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-                    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+            //        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
 
-                    throw;
-                }
-            }
+            //        throw;
+            //    }
+            //}
 
             await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("secrets.json", true);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

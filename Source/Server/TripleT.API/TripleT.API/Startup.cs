@@ -119,6 +119,8 @@ namespace TripleT.API
             app.UseDefaultFiles();
             //app.UseStaticFiles();
 
+            app.con
+
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>

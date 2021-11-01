@@ -19,10 +19,12 @@ namespace TripleT.Infrastructure.Persistence
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<UserAuditEntity> UserAudits { get; set; }
-        public DbSet<PackageSummaryLinkEntity> PackageSummariesLink { get; set; }
-        public DbSet<SummaryEntity> Summaries { get; set; }
-        public DbSet<SummaryCategoryEntity> SummaryCategories { get; set; }
-        public DbSet<SummaryPackageEntity> SummaryPackages { get; set; }
+        public DbSet<GradeEntity> Grades { get; set; }
+        public DbSet<ModuleTypeEntity> ModuleTypes { get; set; }
+        public DbSet<ModuleEntity> Modules { get; set; }
+        public DbSet<SubjectEntity> Subjects { get; set; }
+        public DbSet<PackageEntity> Packages { get; set; }
+        public DbSet<LanguageEntity> Languages { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
