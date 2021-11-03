@@ -111,8 +111,8 @@ namespace TripleT.Infrastructure.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
-                    EmailVerificationId = table.Column<long>(type: "bigint", nullable: false),
-                    PasswordResetDetailId = table.Column<long>(type: "bigint", nullable: false),
+                    EmailVerificationId = table.Column<long>(type: "bigint", nullable: true),
+                    PasswordResetDetailId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -124,7 +124,7 @@ namespace TripleT.Infrastructure.Migrations
                         column: x => x.EmailVerificationId,
                         principalTable: "EmailVerificationEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,

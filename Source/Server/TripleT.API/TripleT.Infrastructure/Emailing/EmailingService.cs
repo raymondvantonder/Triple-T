@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -18,15 +19,17 @@ namespace TripleT.Infrastructure.Emailing
     public class EmailingService : IEmailingService
     {
         private readonly ILogger<EmailingService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public EmailingService(ILogger<EmailingService> logger)
+        public EmailingService(ILogger<EmailingService> logger, IConfiguration configuration)
         {
+            _configuration = configuration;
             _logger = logger;
         }
 
         public async Task<string> SendEmailAsync<TTemplateData>(EmailRequest<TTemplateData> request, CancellationToken cancellationToken)
         {
-            var client = new AmazonSimpleNotificationServiceClient("", "", Amazon.RegionEndpoint.AFSouth1);
+            var client = new AmazonSimpleNotificationServiceClient(_configuration["AWS:SNS:EmailingQueue:AccessKeyID"], _configuration["AWS:SNS:EmailingQueue:AccessSecretKey"], Amazon.RegionEndpoint.AFSouth1);
 
             _logger.LogInformation($"Sending message to emailing SNS topic: [{request.FormatAsJsonForLogging()}]");
 

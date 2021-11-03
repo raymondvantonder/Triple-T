@@ -340,7 +340,7 @@ namespace TripleT.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("EmailVerificationId")
+                    b.Property<long?>("EmailVerificationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Firstname")
@@ -352,7 +352,7 @@ namespace TripleT.Infrastructure.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PasswordResetDetailId")
+                    b.Property<long?>("PasswordResetDetailId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("RoleId")
@@ -465,9 +465,7 @@ namespace TripleT.Infrastructure.Migrations
                 {
                     b.HasOne("TripleT.Domain.Entities.EmailVerificationEntity", "EmailVerification")
                         .WithMany()
-                        .HasForeignKey("EmailVerificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmailVerificationId");
 
                     b.HasOne("TripleT.Domain.Entities.RoleEntity", "Role")
                         .WithMany("Users")

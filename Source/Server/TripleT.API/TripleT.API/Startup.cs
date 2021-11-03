@@ -1,21 +1,17 @@
+using Amazon.Runtime;
+using AWS.Logger;
+using AWS.Logger.SeriLog;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog;
 using TripleT.API.Filter;
 using TripleT.Application;
 using TripleT.Application.Common.Authorization;
@@ -30,6 +26,21 @@ namespace TripleT.API
     {
         public Startup(IConfiguration configuration)
         {
+            //string logGroup = configuration["CloudWatchLogging:LogGroup"];
+            //string logLevel = configuration["CloudWatchLogging:LogLevel"];
+
+            //AWSLoggerConfig awsLoggerConfiguration = new AWSLoggerConfig(logGroup)
+            //{
+            //    Region = "af-south-1",
+            //    Credentials = new BasicAWSCredentials(configuration["AWS:SNS:EmailingQueue:AccessKeyID"], configuration["AWS:SNS:EmailingQueue:AccessSecretKey"])
+            //};
+
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Logger = logger;
+
             Configuration = configuration;
         }
 
@@ -118,8 +129,6 @@ namespace TripleT.API
 
             app.UseDefaultFiles();
             //app.UseStaticFiles();
-
-            app.con
 
             app.UseMiddleware<JwtMiddleware>();
 

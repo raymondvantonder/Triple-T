@@ -10,7 +10,7 @@ using TripleT.Infrastructure.Persistence;
 namespace TripleT.Infrastructure.Migrations
 {
     [DbContext(typeof(TripleTDbContext))]
-    [Migration("20211101090755_InitialCreate")]
+    [Migration("20211101162155_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -342,7 +342,7 @@ namespace TripleT.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("EmailVerificationId")
+                    b.Property<long?>("EmailVerificationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Firstname")
@@ -354,7 +354,7 @@ namespace TripleT.Infrastructure.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PasswordResetDetailId")
+                    b.Property<long?>("PasswordResetDetailId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("RoleId")
@@ -467,9 +467,7 @@ namespace TripleT.Infrastructure.Migrations
                 {
                     b.HasOne("TripleT.Domain.Entities.EmailVerificationEntity", "EmailVerification")
                         .WithMany()
-                        .HasForeignKey("EmailVerificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmailVerificationId");
 
                     b.HasOne("TripleT.Domain.Entities.RoleEntity", "Role")
                         .WithMany("Users")

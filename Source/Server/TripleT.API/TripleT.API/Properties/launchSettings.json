@@ -23,6 +23,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "LOC"
       }
+    },
+    "Console App": {
+      "commandName": "Executable",
+      "executablePath": "C:\\GIT\\Triple-T\\Source\\Server\\TripleT.API\\TripleT.API\\bin\\Debug\\netcoreapp3.1\\TripleT.API.exe",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "LOC"
+      }
     }
   }
 }

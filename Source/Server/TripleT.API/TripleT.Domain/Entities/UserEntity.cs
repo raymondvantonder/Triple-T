@@ -16,8 +16,8 @@ namespace TripleT.Domain.Entities
 
         //Foreign Keys
         public long RoleId { get; set; }
-        public long EmailVerificationId { get; set; }
-        public long PasswordResetDetailId { get; set; }
+        public long? EmailVerificationId { get; set; }
+        public long? PasswordResetDetailId { get; set; }
 
 
         public EmailVerificationEntity EmailVerification { get; set; }
