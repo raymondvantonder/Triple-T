@@ -1,0 +1,8 @@
+{
+	"Template": { 
+		"TemplateName": "TripleT-EmailVerificationTemplate",
+		"SubjectPart": "Triple T Email Verification",
+		"HtmlPart": "<h1>Hello {{name}}, </h1><p>project {{projectname}} is working!</p>",
+		"TextPart": "Hello Mr {{name}}"
+   }
+}

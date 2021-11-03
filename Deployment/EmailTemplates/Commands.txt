@@ -1,0 +1,6 @@
+//Uploads
+aws ses create-template --cli-input-json file://VerficiationEmailTemplate.json
+aws ses create-template --cli-input-json file://WelcomeEmailTemplate.json
+
+//Delete
+aws ses delete-template --template-name TripleT-EmailVerificationTemplate
