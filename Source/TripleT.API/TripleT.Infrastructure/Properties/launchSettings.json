@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TripleT.Infrastructure": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "LOC"
+      }
+    }
+  }
+}
