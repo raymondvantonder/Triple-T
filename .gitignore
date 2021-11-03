@@ -231,4 +231,4 @@ _Pvt_Extensions
 .fake/
 /NDependOut
 
-/Source/Server/TripleT.API/TripleT.API/secrets.json
+/Source/TripleT.API/TripleT.API/secrets.json

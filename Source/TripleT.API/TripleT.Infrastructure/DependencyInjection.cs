@@ -19,10 +19,14 @@ namespace TripleT.Infrastructure
             }
             else
             {
-                services.AddDbContext<TripleTDbContext>(options =>
-                    options.UseSqlServer(
-                        configuration.GetConnectionString("DefaultConnection"),
-                        b => b.MigrationsAssembly(typeof(TripleTDbContext).Assembly.FullName)));
+                string mySqlConnectionStr = configuration.GetConnectionString("DefaultConnection");
+                services.AddDbContextPool<TripleTDbContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+
+
+                //services.AddDbContext<TripleTDbContext>(options =>
+                //    options.UseSqlServer(
+                //        configuration.GetConnectionString("DefaultConnection"),
+                //        b => b.MigrationsAssembly(typeof(TripleTDbContext).Assembly.FullName)));
             }
 
             services.AddScoped<ITripleTDbContext>(provider => provider.GetService<TripleTDbContext>());

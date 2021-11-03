@@ -50,7 +50,7 @@ namespace TripleT.Infrastructure.Persistence
 
             var optionsBuilder = new DbContextOptionsBuilder<TContext>();
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
             return CreateNewInstance(optionsBuilder.Options);
         }
