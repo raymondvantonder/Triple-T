@@ -6,12 +6,7 @@ on:
       - 'Source'
     branches: 
       - main
-  pull_request:
-    paths: 
-      - 'Source'
-    branches: 
-      - main
-
+      
   workflow_dispatch:
 
 jobs:

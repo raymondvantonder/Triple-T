@@ -6,11 +6,6 @@ on:
       - 'Source'
     branches: 
       - develop
-  pull_request:
-    paths: 
-      - 'Source'
-    branches: 
-      - develop
 
   workflow_dispatch:
 
