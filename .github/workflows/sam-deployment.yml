@@ -29,7 +29,9 @@ jobs:
       - name: SAM Build
         run: sam build
       
-      - run: sam deploy \
+      - name: SAM Deploy
+        run: sam deploy \
+                --template ./Deployment/aws-sam template/template.yaml \
                 --s3-prefix ${{ secrets.STACK_NAME }} \
                 --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }} \
                 --capabilities CAPABILITY_IAM \
