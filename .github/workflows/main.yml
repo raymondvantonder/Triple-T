@@ -28,9 +28,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: SAM Build
-        run: sam build
+        run: sam build \
+                --template ./Deployment/aws-sam template/template.yaml \
       
       - run: sam deploy \
+                --template ./Deployment/aws-sam template/template.yaml \
                 --s3-prefix ${{ secrets.STACK_NAME }} \
                 --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }} \
                 --capabilities CAPABILITY_IAM \
