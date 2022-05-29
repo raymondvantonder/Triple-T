@@ -40,6 +40,7 @@ jobs:
                 --parameter-overrides
                     'ParameterKey=StageName,ParameterValue=${{ secrets.STAGE_NAME }}
                     ParameterKey=TableName,ParameterValue=${{ secrets.DYNAMO_TABLE_NAME }}
+                    ParameterKey=TopicName,ParameterValue=${{ secrets.TOPIC_NAME }}
                     ParameterKey=JwtSecretKey,ParameterValue=${{ secrets.JWT_SECRET_KEY }}'
 
 
