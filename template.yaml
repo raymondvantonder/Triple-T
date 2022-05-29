@@ -109,7 +109,7 @@ Resources:
   EmailingTopic:
     Type: AWS::SNS::Topic
     Properties:
-      TopicName: 'triple-t-mailing'
+      TopicName: !Join [ ".", [ !Ref StageName, "triple-t-mailing" ] ]
 
 Outputs:
   TripleTUserFunction:

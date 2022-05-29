@@ -2,11 +2,9 @@ name: Triple-T Production Backend Deployment
 
 on:
   push:
-    paths: 
-      - 'Source'
     branches: 
       - main
-      
+
   workflow_dispatch:
 
 jobs:
