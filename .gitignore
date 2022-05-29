@@ -232,3 +232,4 @@ _Pvt_Extensions
 /NDependOut
 
 /Source/TripleT.API/TripleT.API/secrets.json
+/samconfig.toml

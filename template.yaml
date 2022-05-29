@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  StageName:
+    Type: String
+    Default: default
+  TableName:
+    Type: String
+    Default: defaultTable
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  TripleTDatabase:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  TripleTApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+          - PUT
+          - DELETE
+        AllowOrigins:
+          - "https://www.tripletconsulting.site"
+        AllowHeaders: 
+          - "Content-Type"
+          - "Access-Control-Allow-Origin"
+          - "Accept"
+          - "Authorization"
+  TripleTEmailingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Source/TripleT.Emailing.Lambda/
+      Handler: app.handler
+      Runtime: nodejs14.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'ses:SendTemplatedEmail'
+              Resource: '*'
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref EmailingTopic
+  TripleTUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Source/TripleT.User.Lambda/TripleT.User.Lambda/
+      Handler: TripleT.User.Lambda
+      Runtime: dotnet6
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt EmailingTopic.TopicName
+      Architectures:
+        - x86_64
+      MemorySize: 256
+      Environment:
+        Variables:
+          ASPNETCORE_ENVIRONMENT: !Ref StageName
+          DYNAMODB_TABLE_NAME: !Ref TableName
+          SNS_TOPIC_ARN: !Ref EmailingTopic
+          JWT_TOKEN_EXPIRATION_SECONDS: 3600
+          JWT_TOKEN_SECRET: THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING
+          PASSWORD_RESET_URL: http://localhost:44315/user/reset-password
+          EMAIL_VERIFICATION_URL: http://localhost:44315/user/verify-email
+          MAILING_ENABLED: true
+      Events:
+        ProxyResource:
+          Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            ApiId: !Ref TripleTApi
+            Path: /{proxy+}
+            Method: ANY
+        RootResource:
+          Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            ApiId: !Ref TripleTApi
+            Path: /
+            Method: ANY
+  EmailingTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: 'triple-t-mailing'
+
+Outputs:
+  TripleTUserFunction:
+    Description: "TripleTUserFunction ARN"
+    Value: !GetAtt TripleTUserFunction.Arn
+
+  EmailingTopic:
+    Description: "EmailingTopic ARN"
+    Value: !Ref EmailingTopic
+
+  TripleTApi:
+    Description: "TripleTApi Endpoint"
+    Value: !Sub 'https://${TripleTApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${StageName}/'
