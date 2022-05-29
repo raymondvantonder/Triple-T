@@ -31,16 +31,16 @@ jobs:
         run: sam build
       
       - name: SAM Deploy
-        run: sam deploy \
-                --s3-prefix ${{ secrets.STACK_NAME }} \
-                --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }} \
-                --capabilities CAPABILITY_IAM \
-                --stack-name ${{ secrets.STACK_NAME }} \
-                --no-confirm-changeset \
-                --no-fail-on-empty-changeset \
-                --parameter-overrides \
-                    StageName=${{ secrets.STAGE_NAME }} \
-                    TableName=${{ secrets.DYNAMO_TABLE_NAME }} \
+        run: sam deploy
+                --s3-prefix ${{ secrets.STACK_NAME }}
+                --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }}
+                --capabilities CAPABILITY_IAM
+                --stack-name ${{ secrets.STACK_NAME }}
+                --no-confirm-changeset
+                --no-fail-on-empty-changeset
+                --parameter-overrides
+                    StageName=${{ secrets.STAGE_NAME }}
+                    TableName=${{ secrets.DYNAMO_TABLE_NAME }}
                     JwtSecretKey=${{ secrets.JWT_SECRET_KEY }}
 
 
