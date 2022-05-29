@@ -39,9 +39,9 @@ jobs:
                 --no-confirm-changeset
                 --no-fail-on-empty-changeset
                 --parameter-overrides
-                    StageName=${{ secrets.STAGE_NAME }}
-                    TableName=${{ secrets.DYNAMO_TABLE_NAME }}
-                    JwtSecretKey=${{ secrets.JWT_SECRET_KEY }}
+                    'ParameterKey=StageName,ParameterValue=${{ secrets.STAGE_NAME }}'
+                    'ParameterKey=TableName,ParameterValue=${{ secrets.DYNAMO_TABLE_NAME }}'
+                    'ParameterKey=JwtSecretKey,ParameterValue=${{ secrets.JWT_SECRET_KEY }}'
 
 
 
