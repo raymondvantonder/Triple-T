@@ -54,6 +54,7 @@ Resources:
       CodeUri: ./Source/TripleT.Emailing.Lambda/
       Handler: app.handler
       Runtime: nodejs14.x
+      FunctionName: !Sub "TripleTEmailingFunction${StageName}"
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -75,6 +76,7 @@ Resources:
       CodeUri: ./Source/TripleT.User.Lambda/TripleT.User.Lambda/
       Handler: TripleT.User.Lambda
       Runtime: dotnet6
+      FunctionName: !Sub "TripleTUserFunction${StageName}"
       Policies: 
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName

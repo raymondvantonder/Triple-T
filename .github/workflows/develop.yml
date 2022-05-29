@@ -2,8 +2,8 @@ name: Triple-T Development Backend Deployment
 
 on:
   push:
-    paths: 
-      - 'Source'
+    # paths: 
+    #   - 'Source'
     branches: 
       - develop
 
