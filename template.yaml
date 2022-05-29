@@ -7,6 +7,9 @@ Parameters:
   TableName:
     Type: String
     Default: defaultTable
+  TopicName:
+    Type: String
+    Default: defaultTopic
 
 Globals:
   Function:
@@ -111,7 +114,7 @@ Resources:
   EmailingTopic:
     Type: AWS::SNS::Topic
     Properties:
-      TopicName: !Join [ ".", [ !Ref StageName, "triple-t-mailing" ] ]
+      TopicName: !Ref TopicName
 
 Outputs:
   TripleTUserFunction:
