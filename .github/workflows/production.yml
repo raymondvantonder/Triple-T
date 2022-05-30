@@ -2,13 +2,16 @@ name: Triple-T Production Backend Deployment
 
 on:
   push:
+    paths: 
+      - 'Source'
+      - 'template.yaml'
     branches: 
       - main
 
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     environment: prod
 

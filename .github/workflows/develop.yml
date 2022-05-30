@@ -2,15 +2,16 @@ name: Triple-T Development Backend Deployment
 
 on:
   push:
-    # paths: 
-    #   - 'Source'
+    paths: 
+      - 'Source'
+      - 'template.yaml'
     branches: 
       - develop
 
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     environment: dev
 
