@@ -1,6 +1,38 @@
 name: "Deploy Action"
 description: "Deploys the SAM template"
 
+inputs:
+  aws-access-key-id:
+    description: "AWS_ACCESS_KEY_ID"
+    required: true
+  aws-secret-access-key:
+    description: "AWS_SECRET_ACCESS_KEY"
+    required: true
+  aws-stack-name:
+    description: "Stack Name"
+    required: true
+  aws-region:
+    description: "AWS Region"
+    required: true
+  sam-bucket:
+    description: "SAM Bucket to use for artifacts"
+    required: true
+  stage-name:
+    description: "Stage Name (Environment)"
+    required: true
+  dynamo-db-table-name:
+    description: "Name of dynamodb table"
+    required: true
+  sns-topic-name:
+    description: "Name of SNS topic for sending emails"
+    required: true
+  jwt-secret-key:
+    description: "Secret key for generating JWT tokens"
+    required: true
+  aws-iam-capability:
+    description: "IAM Capability for SAM CLI"
+    required: true
+
 runs:
   steps:
     - uses: actions/checkout@v3
@@ -16,25 +48,25 @@ runs:
     - name: Setup AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
     - name: SAM Build
       run: sam build
     
     - name: SAM Deploy
       run: sam deploy
-              --s3-prefix ${{ secrets.STACK_NAME }}
-              --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }}
-              --capabilities CAPABILITY_IAM
-              --stack-name ${{ secrets.STACK_NAME }}
+              --s3-prefix ${{ inputs.aws-stack-name }}
+              --s3-bucket ${{ inputs.sam-bucket }}
+              --capabilities ${{ inputs.aws-iam-capability }}
+              --stack-name ${{ inputs.aws-stack-name }}
               --no-confirm-changeset
               --no-fail-on-empty-changeset
               --parameter-overrides
-                  'ParameterKey=StageName,ParameterValue=${{ secrets.STAGE_NAME }}
-                  ParameterKey=TableName,ParameterValue=${{ secrets.DYNAMO_TABLE_NAME }}
-                  ParameterKey=TopicName,ParameterValue=${{ secrets.TOPIC_NAME }}
-                  ParameterKey=JwtSecretKey,ParameterValue=${{ secrets.JWT_SECRET_KEY }}'
+                  'ParameterKey=StageName,ParameterValue=${{ inputs.stage-name }}
+                  ParameterKey=TableName,ParameterValue=${{ inputs.dynamo-db-table-name }}
+                  ParameterKey=TopicName,ParameterValue=${{ inputs.sns-topic-name }}
+                  ParameterKey=JwtSecretKey,ParameterValue=${{ inputs.jwt-secret-key }}'
 
 
 
