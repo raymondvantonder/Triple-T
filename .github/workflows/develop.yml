@@ -29,15 +29,3 @@ jobs:
           sns-topic-name: ${{ secrets.TOPIC_NAME }}
           jwt-secret-key: ${{ secrets.JWT_SECRET_KEY }}
           aws-iam-capability: CAPABILITY_IAM
-
-
-
-
-
-
-
-
-
-
-
-
