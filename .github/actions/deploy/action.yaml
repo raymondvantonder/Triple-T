@@ -53,7 +53,8 @@ runs:
         aws-region: ${{ inputs.aws-region }}
     - name: SAM Build
       run: sam build
-    
+      shell: bash
+
     - name: SAM Deploy
       run: sam deploy
               --s3-prefix ${{ inputs.aws-stack-name }}
@@ -67,6 +68,7 @@ runs:
                   ParameterKey=TableName,ParameterValue=${{ inputs.dynamo-db-table-name }}
                   ParameterKey=TopicName,ParameterValue=${{ inputs.sns-topic-name }}
                   ParameterKey=JwtSecretKey,ParameterValue=${{ inputs.jwt-secret-key }}'
+      shell: bash
 
 
 
