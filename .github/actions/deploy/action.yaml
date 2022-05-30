@@ -52,7 +52,7 @@ runs:
         aws-access-key-id: ${{ inputs.aws-access-key-id }}
         aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
         aws-region: ${{ inputs.aws-region }}
-        
+
     - name: SAM Build
       run: sam build
       shell: bash
@@ -71,15 +71,3 @@ runs:
                   ParameterKey=TopicName,ParameterValue=${{ inputs.sns-topic-name }}
                   ParameterKey=JwtSecretKey,ParameterValue=${{ inputs.jwt-secret-key }}'
       shell: bash
-
-
-
-
-
-
-
-
-
-
-
-
