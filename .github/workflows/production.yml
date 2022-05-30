@@ -21,7 +21,7 @@ jobs:
           aws-stack-name: ${{ secrets.STACK_NAME }}
           aws-region: ${{ secrets.AWS_REGION }}
           sam-bucket: ${{ secrets.S3_DEPLOYMENT_BUCKET }}
-          stage-name: ${{ secrets }}
+          stage-name: ${{ secrets.STAGE_NAME }}
           dynamo-db-table-name: ${{ secrets.DYNAMO_TABLE_NAME }}
           sns-topic-name: ${{ secrets.TOPIC_NAME }}
           jwt-secret-key: ${{ secrets.JWT_SECRET_KEY }}
