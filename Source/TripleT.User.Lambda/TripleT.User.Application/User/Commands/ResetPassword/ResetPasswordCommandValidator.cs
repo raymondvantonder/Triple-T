@@ -6,8 +6,14 @@ namespace TripleT.User.Application.User.Commands.ResetPassword
     {
         public ResetPasswordCommandValidator()
         {
-            RuleFor(x => x.Password).NotEmpty();
-            RuleFor(x => x.Token).NotEmpty();
+            RuleFor(x => x.Password)
+                .MaximumLength(24)
+                .MinimumLength(8)
+                .NotEmpty();
+            
+            RuleFor(x => x.Token)
+                .MaximumLength(400)
+                .NotEmpty();
         }
     }
 }

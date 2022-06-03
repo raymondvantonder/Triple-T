@@ -6,7 +6,9 @@ namespace TripleT.User.Application.User.Commands.ResetPasswordNotification
     {
         public ResetPasswordNotificationCommandValidator()
         {
-            RuleFor(x => x.Email).EmailAddress();
+            RuleFor(x => x.Email)
+                .MaximumLength(200)
+                .EmailAddress();
         }
     }
 }

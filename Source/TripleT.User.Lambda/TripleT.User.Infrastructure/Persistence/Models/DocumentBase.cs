@@ -13,6 +13,11 @@ namespace TripleT.User.Infrastructure.Persistence.Models
 
         public DateTime? UpdatedTime { get; set; }
 
-        public string Type { get; set; } = typeof(TParentDocument).Name;
+        public string Type { get; set; } = GetDocumentType();
+
+        public static string GetDocumentType()
+        {
+            return typeof(TParentDocument).Name.Replace("Document", "");
+        }
     }
 }

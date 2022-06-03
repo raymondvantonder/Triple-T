@@ -6,8 +6,12 @@ namespace TripleT.User.Application.User.Commands.Login
     {
         public LoginUserCommandValidator()
         {
-            RuleFor(x => x.Email).EmailAddress();
-            RuleFor(x => x.Password).MinimumLength(8).MaximumLength(24);
+            RuleFor(x => x.Email)
+                .MaximumLength(200)
+                .EmailAddress();
+            RuleFor(x => x.Password)
+                .MinimumLength(8)
+                .MaximumLength(24);
         }
     }
 }

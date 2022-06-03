@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
@@ -44,7 +46,7 @@ namespace TripleT.User.Infrastructure.Persistence
             var document = MapToDocument(item);
 
             document.PK = CreatePrimaryKey(document);
-            document.SK = CreatePrimaryKey(document);
+            document.SK = CreateSortKey(document);
             document.CreatedTime = DateTime.Now;
 
             await LogQueryTime(async () =>
@@ -59,7 +61,7 @@ namespace TripleT.User.Infrastructure.Persistence
             var document = MapToDocument(item);
 
             document.PK = CreatePrimaryKey(document);
-            document.SK = CreatePrimaryKey(document);
+            document.SK = CreateSortKey(document);
             document.UpdatedTime = DateTime.Now;
 
             await LogQueryTime(async () =>
@@ -102,24 +104,86 @@ namespace TripleT.User.Infrastructure.Persistence
             }
         }
 
+        protected async Task<IEnumerable<TEntity>> QueryGlobalSecondaryIndex(string indexName, string hashKey, CancellationToken cancellationToken)
+        {
+            var operationConfig = _operationConfig;
+
+            operationConfig.IndexName = indexName;
+
+            var documents = await LogQueryTime(
+                async () =>
+                {
+                    var query = _dbContext.QueryAsync<TDocument>(
+                        hashKey,
+                        operationConfig);
+
+                    return await query.GetRemainingAsync(cancellationToken);
+                }, nameof(GetItemByIdAsync));
+
+            return documents == null ? Array.Empty<TEntity>() : documents.Select(MapFromDocument);
+        }
+
+        protected async Task<IEnumerable<TEntity>> QueryGlobalSecondaryIndex(string indexName, string hashKey, QueryOperator queryOperator, IEnumerable<string> values, CancellationToken cancellationToken)
+        {
+            var operationConfig = _operationConfig;
+
+            operationConfig.IndexName = indexName;
+
+            var documents = await LogQueryTime(
+                async () =>
+                {
+                    var query = _dbContext.QueryAsync<TDocument>(
+                        hashKey,
+                        queryOperator,
+                        values,
+                        operationConfig);
+
+
+                    return await query.GetRemainingAsync(cancellationToken);
+                }, nameof(GetItemByIdAsync));
+
+            return documents == null ? Array.Empty<TEntity>() : documents.Select(MapFromDocument);
+        }
+
+        protected async Task<TEntity> GetItemByPrimaryKeyAndSortKeyAsync(string id, string rangeKey, CancellationToken cancellationToken)
+        {
+            var document = await LogQueryTime(
+                async () => await _dbContext.LoadAsync<TDocument>(
+                    id,
+                    rangeKey,
+                    _operationConfig,
+                    cancellationToken), $"[{nameof(GetItemByPrimaryKeyAndSortKeyAsync)}]: [{typeof(TDocument).Name}]");
+
+            return MapFromDocument(document);
+        }
+
+        protected async Task DeleteItemByPrimaryKeyAndSortKeyAsync(string id, string rangeKey, CancellationToken cancellationToken)
+        {
+            await LogQueryTime(async () =>
+                    await _dbContext.DeleteAsync<TDocument>(
+                        id,
+                        rangeKey,
+                        _operationConfig,
+                        cancellationToken), $"[{nameof(DeleteItemByPrimaryKeyAndSortKeyAsync)}]: [{typeof(TDocument).Name}]"
+            );
+        }
+
+        protected async Task<IEnumerable<TEntity>> GetAllByPrimaryKeyAsync(string id, CancellationToken cancellationToken)
+        {
+            var results = await LogQueryTime(
+                async () => await _dbContext.QueryAsync<TDocument>(
+                        id,
+                        _operationConfig)
+                    .GetRemainingAsync(cancellationToken), $"[{nameof(GetAllByPrimaryKeyAsync)}]: [{typeof(TDocument).Name}]");
+
+            return results?.Select(MapFromDocument);
+        }
+
         private ScanOperator MapToOperator(QueryModel.QueryType queryOperator)
         {
             return queryOperator switch
             {
-                QueryModel.QueryType.Equal => ScanOperator.Equal
-                , QueryModel.QueryType.NotEqual => ScanOperator.NotEqual
-                , QueryModel.QueryType.LessThanOrEqual => ScanOperator.LessThanOrEqual
-                , QueryModel.QueryType.LessThan => ScanOperator.LessThan
-                , QueryModel.QueryType.GreaterThanOrEqual => ScanOperator.GreaterThanOrEqual
-                , QueryModel.QueryType.GreaterThan => ScanOperator.GreaterThan
-                , QueryModel.QueryType.IsNotNull => ScanOperator.IsNotNull
-                , QueryModel.QueryType.IsNull => ScanOperator.IsNull
-                , QueryModel.QueryType.Contains => ScanOperator.Contains
-                , QueryModel.QueryType.NotContains => ScanOperator.NotContains
-                , QueryModel.QueryType.BeginsWith => ScanOperator.BeginsWith
-                , QueryModel.QueryType.In => ScanOperator.In
-                , QueryModel.QueryType.Between => ScanOperator.Between
-                , _ => throw new ArgumentOutOfRangeException(nameof(queryOperator), queryOperator, null)
+                QueryModel.QueryType.Equal => ScanOperator.Equal, QueryModel.QueryType.NotEqual => ScanOperator.NotEqual, QueryModel.QueryType.LessThanOrEqual => ScanOperator.LessThanOrEqual, QueryModel.QueryType.LessThan => ScanOperator.LessThan, QueryModel.QueryType.GreaterThanOrEqual => ScanOperator.GreaterThanOrEqual, QueryModel.QueryType.GreaterThan => ScanOperator.GreaterThan, QueryModel.QueryType.IsNotNull => ScanOperator.IsNotNull, QueryModel.QueryType.IsNull => ScanOperator.IsNull, QueryModel.QueryType.Contains => ScanOperator.Contains, QueryModel.QueryType.NotContains => ScanOperator.NotContains, QueryModel.QueryType.BeginsWith => ScanOperator.BeginsWith, QueryModel.QueryType.In => ScanOperator.In, QueryModel.QueryType.Between => ScanOperator.Between, _ => throw new ArgumentOutOfRangeException(nameof(queryOperator), queryOperator, null)
             };
         }
 

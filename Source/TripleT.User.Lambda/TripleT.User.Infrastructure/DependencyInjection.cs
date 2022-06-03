@@ -25,6 +25,9 @@ namespace TripleT.User.Infrastructure
             services.AddTransient<IDynamoDBContext>(sp => new DynamoDBContext(dynamoDbClient, dynamoDbConfig));
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPasswordRepository, PasswordRepository>();
+            services.AddTransient<IGradeRepository, GradeRepository>();
+            services.AddTransient<ISubjectRepository, SubjectRepository>();
+            services.AddTransient<ISummaryProductRepository, SummaryProductRepository>();
             services.AddTransient<IEmailingService, EmailingService>();
 
             return services;
