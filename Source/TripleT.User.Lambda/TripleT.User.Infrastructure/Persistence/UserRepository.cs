@@ -14,7 +14,7 @@ namespace TripleT.User.Infrastructure.Persistence
         private readonly IDynamoDBContext _dbContext;
         private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(IDynamoDBContext dbContext, ILogger<UserRepository> logger, IConfiguration configuration) 
+        public UserRepository(IDynamoDBContext dbContext, ILogger<UserRepository> logger, IConfiguration configuration)
             : base(dbContext, logger, configuration)
         {
             _dbContext = dbContext;
@@ -23,7 +23,7 @@ namespace TripleT.User.Infrastructure.Persistence
 
         private const string PK_TEMPLATE = "user#{0}";
         private const string SK_TEMPLATE = "user#{0}";
-    
+
         protected override string CreatePrimaryKey(UserDocument document)
         {
             return string.Format(PK_TEMPLATE, document.Email);
@@ -37,7 +37,7 @@ namespace TripleT.User.Infrastructure.Persistence
         protected override UserDocument MapToDocument(UserEntity entity)
         {
             if (entity == null) return null;
-            
+
             var userDocument = new UserDocument
             {
                 Name = entity.Name,
@@ -62,7 +62,7 @@ namespace TripleT.User.Infrastructure.Persistence
         protected override UserEntity MapFromDocument(UserDocument document)
         {
             if (document == null) return null;
-            
+
             var userEntity = new UserEntity
             {
                 Name = document.Name,
@@ -86,10 +86,10 @@ namespace TripleT.User.Infrastructure.Persistence
 
         public override async Task<UserEntity> GetItemByIdAsync(string id, CancellationToken cancellationToken)
         {
-            var document = await LogQueryTime(
-                async () => await _dbContext.LoadAsync<UserDocument>(string.Format(PK_TEMPLATE, id), string.Format(SK_TEMPLATE, id), _operationConfig, cancellationToken), nameof(GetItemByIdAsync));
-
-            return MapFromDocument(document);
+            return await GetItemByPrimaryKeyAndSortKeyAsync(
+                string.Format(PK_TEMPLATE, id),
+                string.Format(SK_TEMPLATE, id),
+                cancellationToken);
         }
     }
 }

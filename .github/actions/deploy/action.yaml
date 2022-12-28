@@ -1,0 +1,73 @@
+name: "Deploy Action"
+description: "Deploys the SAM template"
+
+inputs:
+  aws-access-key-id:
+    description: "AWS_ACCESS_KEY_ID"
+    required: true
+  aws-secret-access-key:
+    description: "AWS_SECRET_ACCESS_KEY"
+    required: true
+  aws-stack-name:
+    description: "Stack Name"
+    required: true
+  aws-region:
+    description: "AWS Region"
+    required: true
+  sam-bucket:
+    description: "SAM Bucket to use for artifacts"
+    required: true
+  stage-name:
+    description: "Stage Name (Environment)"
+    required: true
+  dynamo-db-table-name:
+    description: "Name of dynamodb table"
+    required: true
+  sns-topic-name:
+    description: "Name of SNS topic for sending emails"
+    required: true
+  jwt-secret-key:
+    description: "Secret key for generating JWT tokens"
+    required: true
+  aws-iam-capability:
+    description: "IAM Capability for SAM CLI"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+    
+    - name: Setup SAM CLI
+      uses: aws-actions/setup-sam@v2
+
+    - name: Setup AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: SAM Build
+      run: sam build
+      shell: bash
+
+    - name: SAM Deploy
+      run: sam deploy
+              --s3-prefix ${{ inputs.aws-stack-name }}
+              --s3-bucket ${{ inputs.sam-bucket }}
+              --capabilities ${{ inputs.aws-iam-capability }}
+              --stack-name ${{ inputs.aws-stack-name }}
+              --no-confirm-changeset
+              --no-fail-on-empty-changeset
+              --parameter-overrides
+                  'ParameterKey=StageName,ParameterValue=${{ inputs.stage-name }}
+                  ParameterKey=TableName,ParameterValue=${{ inputs.dynamo-db-table-name }}
+                  ParameterKey=TopicName,ParameterValue=${{ inputs.sns-topic-name }}
+                  ParameterKey=JwtSecretKey,ParameterValue=${{ inputs.jwt-secret-key }}'
+      shell: bash

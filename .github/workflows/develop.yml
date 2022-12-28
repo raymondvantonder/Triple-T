@@ -2,57 +2,30 @@ name: Triple-T Development Backend Deployment
 
 on:
   push:
-    # paths: 
-    #   - 'Source'
+    paths: 
+      - 'Source'
+      - 'template.yaml'
     branches: 
       - develop
 
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     environment: dev
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-      
-      - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: ./.github/actions/deploy
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-stack-name: ${{ secrets.STACK_NAME }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: SAM Build
-        run: sam build
-      
-      - name: SAM Deploy
-        run: sam deploy
-                --s3-prefix ${{ secrets.STACK_NAME }}
-                --s3-bucket ${{ secrets.S3_DEPLOYMENT_BUCKET }}
-                --capabilities CAPABILITY_IAM
-                --stack-name ${{ secrets.STACK_NAME }}
-                --no-confirm-changeset
-                --no-fail-on-empty-changeset
-                --parameter-overrides
-                    'ParameterKey=StageName,ParameterValue=${{ secrets.STAGE_NAME }}
-                    ParameterKey=TableName,ParameterValue=${{ secrets.DYNAMO_TABLE_NAME }}
-                    ParameterKey=TopicName,ParameterValue=${{ secrets.TOPIC_NAME }}
-                    ParameterKey=JwtSecretKey,ParameterValue=${{ secrets.JWT_SECRET_KEY }}'
-
-
-
-
-
-
-
-
-
-
-
-
+          sam-bucket: ${{ secrets.S3_DEPLOYMENT_BUCKET }}
+          stage-name: ${{ secrets.STAGE_NAME }}
+          dynamo-db-table-name: ${{ secrets.DYNAMO_TABLE_NAME }}
+          sns-topic-name: ${{ secrets.TOPIC_NAME }}
+          jwt-secret-key: ${{ secrets.JWT_SECRET_KEY }}
+          aws-iam-capability: CAPABILITY_IAM

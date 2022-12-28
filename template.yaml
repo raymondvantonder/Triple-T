@@ -10,6 +10,9 @@ Parameters:
   TopicName:
     Type: String
     Default: defaultTopic
+  JwtSecretKey:
+    Type: String
+    Default: defaultSecretKey
 
 Globals:
   Function:
@@ -21,18 +24,49 @@ Resources:
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-        - AttributeName: PK
-          AttributeType: S
-        - AttributeName: SK
-          AttributeType: S
+      - AttributeName: PK
+        AttributeType: S
+      - AttributeName: SK
+        AttributeType: S
+      - AttributeName: GSI1PK
+        AttributeType: S
+      - AttributeName: GSI1SK
+        AttributeType: S
+      - AttributeName: GSI2PK
+        AttributeType: S
+      - AttributeName: GSI2SK
+        AttributeType: S
       KeySchema:
-        - AttributeName: PK
-          KeyType: HASH
-        - AttributeName: SK
-          KeyType: RANGE
+      - AttributeName: PK
+        KeyType: HASH
+      - AttributeName: SK
+        KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+      - IndexName: GSI1
+        KeySchema:
+          - AttributeName: GSI1PK
+            KeyType: HASH
+          - AttributeName: GSI1SK
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
+      - IndexName: GSI2
+        KeySchema:
+          - AttributeName: GSI2PK
+            KeyType: HASH
+          - AttributeName: GSI2SK
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
   TripleTApi:
     Type: AWS::Serverless::HttpApi
     Properties:
@@ -94,7 +128,7 @@ Resources:
           DYNAMODB_TABLE_NAME: !Ref TableName
           SNS_TOPIC_ARN: !Ref EmailingTopic
           JWT_TOKEN_EXPIRATION_SECONDS: 3600
-          JWT_TOKEN_SECRET: THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING
+          JWT_TOKEN_SECRET: !Ref JwtSecretKey
           PASSWORD_RESET_URL: http://localhost:44315/user/reset-password
           EMAIL_VERIFICATION_URL: http://localhost:44315/user/verify-email
           MAILING_ENABLED: true
