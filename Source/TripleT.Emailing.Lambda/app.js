@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
     console.log(message);
 
     const params = {
-      Source: "triplet.consulting.notify@gmail.com",
+      Source: "noreply@test.com",
       Template: message.template,
       Destination: {
         ToAddresses: [],
